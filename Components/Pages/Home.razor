@@ -1,0 +1,177 @@
+@page "/"
+@using System.Linq
+
+<PageTitle>Restaurant Billing</PageTitle>
+
+<div class="billing-container">
+    <h1 class="app-title">🍽️ Restaurant Billing Software</h1>
+
+    <div class="row">
+        <div class="col-md-7">
+            <h3>Menu</h3>
+            <div class="menu-grid">
+                @foreach (var item in menu)
+                {
+                    <div class="menu-card">
+                        <div class="menu-name">@item.Name</div>
+                        <div class="menu-price">₹@item.Price</div>
+                        <div class="menu-actions">
+                            <input type="number" min="1" @bind="item.SelectedQty" class="qty-input" />
+                            <button class="btn btn-add" @onclick="() => AddToCart(item)">Add</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <h3>Current Bill</h3>
+            <div class="cart-panel">
+                @if (cart.Count == 0)
+                {
+                    <p class="empty-cart">No items added yet.</p>
+                }
+                else
+                {
+                    <table class="table cart-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var b in cart)
+                            {
+                                <tr>
+                                    <td>@b.Name</td>
+                                    <td>@b.Quantity</td>
+                                    <td>₹@b.Price</td>
+                                    <td>₹@b.Total.ToString("F2")</td>
+                                    <td><button class="btn btn-remove" @onclick="() => RemoveFromCart(b)">✕</button></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <div class="totals">
+                        <div class="total-line"><span>Subtotal</span><span>₹@Subtotal.ToString("F2")</span></div>
+                        <div class="total-line"><span>GST (5%)</span><span>₹@GstAmount.ToString("F2")</span></div>
+                        <div class="total-line grand-total"><span>Grand Total</span><span>₹@GrandTotal.ToString("F2")</span></div>
+                    </div>
+
+                    <div class="cart-buttons">
+                        <button class="btn btn-generate" @onclick="GenerateBill">Generate Bill</button>
+                        <button class="btn btn-clear" @onclick="ClearCart">Clear</button>
+                    </div>
+                }
+            </div>
+
+            @if (showBill)
+            {
+                <div class="receipt">
+                    <h4>🧾 Final Bill</h4>
+                    <pre>@billText</pre>
+                    <button class="btn btn-close" @onclick="() => showBill = false">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<MenuItem> menu = new()
+    {
+        new MenuItem("Idli (2 pcs)", 40),
+        new MenuItem("Dosa", 60),
+        new MenuItem("Poori (2 pcs)", 50),
+        new MenuItem("Chicken Biryani", 180),
+        new MenuItem("Veg Biryani", 130),
+        new MenuItem("Parotta (2 pcs)", 40),
+        new MenuItem("Chicken 65", 150),
+        new MenuItem("Fried Rice", 120),
+        new MenuItem("Tea", 15),
+        new MenuItem("Coffee", 20)
+    };
+
+    private List<BillItem> cart = new();
+    private const double GstPercent = 5.0;
+    private bool showBill = false;
+    private string billText = "";
+
+    private double Subtotal => cart.Sum(c => c.Total);
+    private double GstAmount => Subtotal * (GstPercent / 100);
+    private double GrandTotal => Subtotal + GstAmount;
+
+    private void AddToCart(MenuItem item)
+    {
+        int qty = item.SelectedQty < 1 ? 1 : item.SelectedQty;
+        var existing = cart.FirstOrDefault(c => c.Name == item.Name);
+        if (existing != null)
+        {
+            existing.Quantity += qty;
+        }
+        else
+        {
+            cart.Add(new BillItem { Name = item.Name, Price = item.Price, Quantity = qty });
+        }
+        item.SelectedQty = 1;
+    }
+
+    private void RemoveFromCart(BillItem item)
+    {
+        cart.Remove(item);
+    }
+
+    private void ClearCart()
+    {
+        cart.Clear();
+        showBill = false;
+    }
+
+    private void GenerateBill()
+    {
+        var lines = new List<string>();
+        lines.Add("========================================");
+        lines.Add("          RESTAURANT FINAL BILL");
+        lines.Add("========================================");
+        lines.Add($"Date: {DateTime.Now:dd-MM-yyyy HH:mm}");
+        lines.Add("----------------------------------------");
+        foreach (var item in cart)
+        {
+            lines.Add($"{item.Name,-20} x{item.Quantity,-3} Rs.{item.Total:F2}");
+        }
+        lines.Add("----------------------------------------");
+        lines.Add($"Subtotal:     Rs.{Subtotal:F2}");
+        lines.Add($"GST (5%):     Rs.{GstAmount:F2}");
+        lines.Add($"GRAND TOTAL:  Rs.{GrandTotal:F2}");
+        lines.Add("========================================");
+        lines.Add("        Thank you! Visit Again!");
+
+        billText = string.Join("\n", lines);
+        showBill = true;
+    }
+
+    public class MenuItem
+    {
+        public string Name { get; set; }
+        public double Price { get; set; }
+        public int SelectedQty { get; set; } = 1;
+        public MenuItem(string name, double price)
+        {
+            Name = name;
+            Price = price;
+        }
+    }
+
+    public class BillItem
+    {
+        public string Name { get; set; }
+        public double Price { get; set; }
+        public int Quantity { get; set; }
+        public double Total => Price * Quantity;
+    }
+}

@@ -1,0 +1,148 @@
+﻿.billing-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.app-title {
+    text-align: center;
+    color: #d84315;
+    margin-bottom: 24px;
+    font-weight: 700;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+.menu-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border: 1px solid #f0e6e0;
+}
+
+.menu-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.menu-price {
+    color: #d84315;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.menu-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.qty-input {
+    width: 55px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.btn {
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-add {
+    background: #ff7043;
+    color: white;
+}
+.btn-add:hover { background: #f4511e; }
+
+.cart-panel {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    min-height: 200px;
+}
+
+.cart-table {
+    width: 100%;
+    font-size: 14px;
+}
+
+.btn-remove {
+    background: #ffebee;
+    color: #c62828;
+    padding: 2px 8px;
+}
+
+.totals {
+    margin-top: 12px;
+    border-top: 1px dashed #ddd;
+    padding-top: 10px;
+}
+
+.total-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+}
+
+.grand-total {
+    font-weight: 700;
+    font-size: 17px;
+    color: #d84315;
+}
+
+.cart-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.btn-generate {
+    background: #2e7d32;
+    color: white;
+    flex: 1;
+}
+.btn-generate:hover { background: #1b5e20; }
+
+.btn-clear {
+    background: #eeeeee;
+    color: #333;
+}
+
+.empty-cart {
+    color: #999;
+    text-align: center;
+    padding: 30px 0;
+}
+
+.receipt {
+    margin-top: 16px;
+    background: #fffde7;
+    border: 1px dashed #f9a825;
+    border-radius: 8px;
+    padding: 14px;
+}
+
+.receipt pre {
+    white-space: pre-wrap;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}
+
+.btn-close {
+    background: #f9a825;
+    color: white;
+    margin-top: 10px;
+}
